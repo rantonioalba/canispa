@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
-public class OwnerController {
+public class WelcomeController {
     @PostMapping(value = "welcome")
     public String welcome() {
         return "Welcome Owner of pets";
