@@ -10,8 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.devr.cani.spa.Entity.Owner;
+import com.devr.cani.spa.controller.base.BaseController;
+import com.devr.cani.spa.dto.OwnerRequestDTO;
+import com.devr.cani.spa.dto.response.ApiResponse;
+import com.devr.cani.spa.dto.response.OwnerResponseDTO;
 import com.devr.cani.spa.service.OwnerService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -33,7 +38,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 
-public class OwnerController {
+public class OwnerController extends BaseController {
 
     @Autowired
     private OwnerService ownerService;
@@ -54,8 +59,9 @@ public class OwnerController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createOwner(@RequestBody Owner owner) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(ownerService.createOwner(owner));
+    public ResponseEntity<ApiResponse<OwnerResponseDTO>> createOwner(@Valid @RequestBody OwnerRequestDTO owner) {
+        OwnerResponseDTO response = ownerService.createOwner(owner);
+        return responseCreated(response);
     }
     
     @PutMapping("/{id}")

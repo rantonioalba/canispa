@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OwnerRequest {
+public class OwnerRequestDTO {
     @NotBlank(message = "Name is required")
     private String name;
     private String email;

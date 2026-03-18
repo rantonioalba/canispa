@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PetRequest {
+public class PetRequestDTO {
     private String name;
     private String birthDate;
     private String image;
