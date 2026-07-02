@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.Mapping;
 
 import com.devr.cani.spa.Entity.Owner;
 import com.devr.cani.spa.dto.OwnerRequestDTO;
@@ -37,7 +38,7 @@ public class OwnerServiceImpl implements OwnerService {
     @Override
     public OwnerResponseDTO createOwner(OwnerRequestDTO ownerRequestDTO) {
         Owner owner = ownerMapper.map(ownerRequestDTO, Owner.class);    
-
+        owner.setCreatedAt(java.time.LocalDateTime.now()); // Set the createdAt field to the current date and time
         Owner savedOwner = ownerRepository.save(owner);
         return ownerMapper.map(savedOwner, OwnerResponseDTO.class); 
     }

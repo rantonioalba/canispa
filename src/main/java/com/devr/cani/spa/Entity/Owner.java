@@ -1,8 +1,13 @@
 package com.devr.cani.spa.Entity;
 
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,8 +33,13 @@ public class Owner {
     private String email;
     private String phoneNumber;
     private String address;
+    private boolean active = true; // Default to true for new owners
+    @JsonProperty("joinedAt")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonManagedReference
     private List<Pet>  pets = new ArrayList<>();
 
      // Helper methods
