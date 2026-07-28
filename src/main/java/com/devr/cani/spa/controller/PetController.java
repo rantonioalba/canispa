@@ -10,8 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.devr.cani.spa.Entity.Pet;
+import com.devr.cani.spa.controller.base.BaseController;
+import com.devr.cani.spa.dto.PetRequestDTO;
+import com.devr.cani.spa.dto.response.ApiResponse;
+import com.devr.cani.spa.dto.response.PetResponseDTO;
 import com.devr.cani.spa.service.PetService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,7 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/api/v1/pets")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
-public class PetController {
+public class PetController extends BaseController {
 
     @Autowired
     private PetService petService;
@@ -48,8 +53,9 @@ public class PetController {
     }
     
     @PostMapping
-    public ResponseEntity<?> createPet(@RequestBody Pet pet) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(petService.createPet(pet));
+    public ResponseEntity<ApiResponse<PetResponseDTO>> createPet(@Valid @RequestBody PetRequestDTO pet) {
+        PetResponseDTO response = petService.createPet(pet);
+        return responseCreated(response);
     }
 
     @PutMapping("/{id}")    

@@ -1,6 +1,7 @@
 package com.devr.cani.spa.dto.response;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,17 +25,5 @@ public class OwnerResponseDTO {
     @JsonProperty("joinedAt")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdAt; // Optional field for createdAt, can be set by the service layer
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class PetResponseDTO {
-        private Long id;
-        private String name;
-        private String birthDate;
-        private String image;
-        private boolean active;
-        private LocalDateTime createdAt;
-    }
+    private List<PetResponseDTO> pets;    
 }

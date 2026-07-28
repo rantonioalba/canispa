@@ -1,6 +1,9 @@
 package com.devr.cani.spa.Entity;
 
+import java.time.LocalDate;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,7 +20,10 @@ public class Pet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String birthDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate birthDate;
+    private String breed;
+    private String color;
     private String image;
 
     @ManyToOne(fetch = FetchType.LAZY)
