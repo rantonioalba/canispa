@@ -10,6 +10,10 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.devr.cani.spa.exception.InvalidTokenException;
+import com.devr.cani.spa.exception.MalformedTokenException;
+import com.devr.cani.spa.exception.TokenExpiredException;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailService;
+    private final TokenExpirationHandler tokenExpirationHandler;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -29,29 +34,79 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String token = getTokenFromRequest(request);
         final String username;
 
-        if(token == null) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        username = jwtService.getUsernameFromToken(token);
-
-        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailService.loadUserByUsername(username);
-            if(jwtService.isTokenValid(token, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    userDetails,
-                    null,
-                    userDetails.getAuthorities()
-                );
-                authToken.setDetails(
-                    new WebAuthenticationDetailsSource().buildDetails(request)
-                );
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+        try {
+            if(token == null) {
+                filterChain.doFilter(request, response);
+                return;
             }
-        }
 
-        filterChain.doFilter(request, response);
+            try {
+                username = jwtService.getUsernameFromToken(token);
+            } catch (TokenExpiredException e) {
+                // Handle the exception, e.g., log it or send an error response
+                tokenExpirationHandler.handleTokenExpired(response, e);
+                return; // Stop further processing
+            } catch (InvalidTokenException  | MalformedTokenException e) {
+                // Handle other exceptions related to token parsing
+                tokenExpirationHandler.handleInvalidToken(response, e);
+                return; // Stop further processing
+            }
+            
+        
+
+
+            if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailService.loadUserByUsername(username);
+                try {
+                    if(jwtService.isTokenValid(token, userDetails)) {
+                        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                        );
+                        authToken.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request)
+                        );
+                        SecurityContextHolder.getContext().setAuthentication(authToken);
+                    }
+                } catch (TokenExpiredException e) {
+                    // Handle the exception, e.g., log it or send an error response
+                    tokenExpirationHandler.handleTokenExpired(response, e);
+                    return; // Stop further processing
+                } catch (InvalidTokenException  | MalformedTokenException e) {
+                    // Handle other exceptions related to token parsing
+                    tokenExpirationHandler.handleInvalidToken(response, e);
+                    return; // Stop further processing
+                }
+                
+                try {
+                    if(jwtService.isTokenValid(token, userDetails)) {
+                        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                        );
+                        authToken.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request)
+                        );
+                        SecurityContextHolder.getContext().setAuthentication(authToken);
+                    }
+                } catch (TokenExpiredException e) {
+                    // Handle the exception, e.g., log it or send an error response
+                    tokenExpirationHandler.handleTokenExpired(response, e);
+                    return; // Stop further processing
+                } catch (InvalidTokenException  | MalformedTokenException e) {
+                    // Handle other exceptions related to token parsing
+                    tokenExpirationHandler.handleInvalidToken(response, e);
+                    return; // Stop further processing
+                }
+            }
+            filterChain.doFilter(request, response);
+        } catch (Exception e) {
+            // Handle the exception, e.g., log it or send an error response
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Unauthorized: " + e.getMessage());
+        }
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {

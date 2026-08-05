@@ -16,7 +16,9 @@ import com.devr.cani.spa.repository.OwnerRepository;
 import com.devr.cani.spa.repository.PetRepository;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class PetServiceImpl implements PetService {
 
@@ -42,17 +44,26 @@ public class PetServiceImpl implements PetService {
     @Override
     public PetResponseDTO createPet(PetRequestDTO petRequestDTO) {
         // Check if Owner exists
-        Owner owner = ownerRepository.findById(petRequestDTO.getOwnerId())
-                .orElseThrow(() -> new ResourceNotFoundException("Owner not found with id: " + petRequestDTO.getOwnerId()));
+        if (!ownerRepository.existsById(petRequestDTO.getOwnerId())) {
+            throw new ResourceNotFoundException("Owner not found with id: " + petRequestDTO.getOwnerId());
+        }
 
-        // convert PetRequestDTO to Pet entity
-        Pet pet = petMapper.toEntity(petRequestDTO);
-        pet.setOwner(owner);
+        try {
+            Owner owner = ownerRepository.getReferenceById(petRequestDTO.getOwnerId());
+            Pet pet = petMapper.toEntity(petRequestDTO);
+            pet.setId(null);
+            log.info("Creating pet: {}", pet);
+            pet.setOwner(owner);
 
-        Pet savedPet = petRepository.save(pet);
+            log.info("Setting owner for pet: {}", pet);
+            Pet savedPet = petRepository.save(pet);
+            log.info("Pet created successfully: {}", savedPet);
+            return petMapper.toDTO(savedPet);
 
-        PetResponseDTO petResponseDTO = petMapper.toDTO(savedPet);
-        return petResponseDTO;
+        } catch (Exception e) {
+            log.error("Failed to create pet: {}", e.getMessage());
+            throw new RuntimeException("Failed to create pet: " + e.getMessage());
+        }
     }
 
     @Override

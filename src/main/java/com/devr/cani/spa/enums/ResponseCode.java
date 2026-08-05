@@ -10,6 +10,9 @@ public enum ResponseCode {
     CREATED("001", "Registration successful"),
     UPDATED("002", "Update successful"),
     DELETED("003", "Deletion successful"),
+    UNAUTHORIZED("401", "Token expired"),
+    TOKEN_EXPIRED("401-01", "Invalid token"),
+    INVALID_TOKEN("401-02", "Invalid token"),
 
     // Error codes
     BAD_REQUEST("400", "Bad request"),

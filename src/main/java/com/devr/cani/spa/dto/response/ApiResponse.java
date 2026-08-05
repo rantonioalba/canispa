@@ -1,5 +1,7 @@
 package com.devr.cani.spa.dto.response;
 
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
@@ -16,6 +18,7 @@ public class ApiResponse<T> {
     private String code;
     private boolean success;
     private String message;
+    private LocalDateTime timestamp;
     private T data;
 
     //Success response with data
@@ -24,6 +27,7 @@ public class ApiResponse<T> {
                 .code("000")
                 .success(true)
                 .message(message)
+                .timestamp(LocalDateTime.now())
                 .data(data)
                 .build();
     }
@@ -34,6 +38,7 @@ public class ApiResponse<T> {
                 .code("000")
                 .success(true)
                 .message(message)
+                .timestamp(LocalDateTime.now())
                 .build();   
     }
 
@@ -51,6 +56,7 @@ public class ApiResponse<T> {
                 .code(code)
                 .success(false)
                 .message(message)
+                .timestamp(LocalDateTime.now())
                 .build();   
     }
 
@@ -60,6 +66,7 @@ public class ApiResponse<T> {
                 .code(code)
                 .success(false)
                 .message(message)
+                .timestamp(LocalDateTime.now())
                 .data(data)
                 .build();   
     }

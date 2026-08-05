@@ -20,4 +20,6 @@ public class PetResponseDTO {
     private String breed;
     private String color;
     private String image;
+    private Long ownerId;
+    private String ownerName;
 }
