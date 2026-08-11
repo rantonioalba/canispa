@@ -11,6 +11,8 @@ public enum ResponseCode {
     UPDATED("002", "Update successful"),
     DELETED("003", "Deletion successful"),
     UNAUTHORIZED("401", "Token expired"),
+    FORBIDDEN("403", "Forbidden"),
+    CONFLICT("409", "Conflict"),
     TOKEN_EXPIRED("401-01", "Invalid token"),
     INVALID_TOKEN("401-02", "Invalid token"),
 

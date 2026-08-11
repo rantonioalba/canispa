@@ -1,6 +1,10 @@
 package com.devr.cani.spa.Config;
 
 import com.devr.cani.spa.Jwt.JwtAuthenticationFilter;
+import com.devr.cani.spa.security.CustomAuthenticationEntryPoint;
+import com.devr.cani.spa.security.CustomAuthenticationFailureHandler;
+import com.devr.cani.spa.security.CustomAuthenticationSuccessHandler;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.annotation.Bean;
@@ -10,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -19,8 +24,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+    private final CustomAuthenticationFailureHandler authenticationFailureHandler;
+    private final CustomAuthenticationSuccessHandler authenticationSuccessHandler;
     private final AuthenticationProvider authenticationProvider;
+    private final UserDetailsService userDetailsService;
 
     @Bean    
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -35,7 +43,12 @@ public class SecurityConfig {
                         )
                 .sessionManagement(sessionManager ->
                         sessionManager
-                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling
+                                .authenticationEntryPoint(authenticationEntryPoint)
+                )
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

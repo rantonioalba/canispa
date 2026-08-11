@@ -1,6 +1,7 @@
 package com.devr.cani.spa.Auth;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.devr.cani.spa.controller.base.BaseController;
 import com.devr.cani.spa.dto.response.ApiResponse;
 
+import jakarta.validation.Valid;
+
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -22,9 +26,15 @@ public class AuthController extends BaseController {
 
 
     @PostMapping(value = "login")
-    public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody LoginRequest request){
-        LoginResponse loginResponse = authService.login(request);
-        return responseSuccess("Login successful", loginResponse);
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request){
+        try {
+            log.info("Login attempt for user: {}", request.getUsername());
+            LoginResponse loginResponse = authService.login(request);
+            return responseSuccess("Login successful", loginResponse);
+        } catch (Exception e) {
+            log.error("Login failed for user: {}. Error: {}", request.getUsername(), e.getMessage());
+            throw e;
+        }
     }
 
     @PostMapping(value = "register")
