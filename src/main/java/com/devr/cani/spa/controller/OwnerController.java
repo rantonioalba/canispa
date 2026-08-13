@@ -44,8 +44,9 @@ public class OwnerController extends BaseController {
     private OwnerService ownerService;
     
     @GetMapping    
-    public ResponseEntity<List<Owner>> getAllOwners() {
-        return ResponseEntity.ok(ownerService.getAllOwners());
+    public ResponseEntity<ApiResponse<List<OwnerResponseDTO>>> getAllOwners() {
+        List<OwnerResponseDTO> owners = ownerService.getAllOwners();
+        return responseSuccess("Owners retrieved successfully", owners);
     }
 
     @GetMapping("/{id}")

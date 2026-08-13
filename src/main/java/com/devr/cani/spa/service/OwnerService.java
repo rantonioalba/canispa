@@ -8,7 +8,7 @@ import com.devr.cani.spa.dto.OwnerRequestDTO;
 import com.devr.cani.spa.dto.response.OwnerResponseDTO;
 
 public interface OwnerService {
-    List<Owner> getAllOwners();
+    List<OwnerResponseDTO> getAllOwners();
     Optional<Owner> getOwnerById(Long id);
     OwnerResponseDTO createOwner(OwnerRequestDTO owner);
     Owner updateOwner(Long id, Owner owner);

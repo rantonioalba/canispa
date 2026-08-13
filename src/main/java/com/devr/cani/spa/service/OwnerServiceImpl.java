@@ -26,8 +26,10 @@ public class OwnerServiceImpl implements OwnerService {
     private OwnerMapper ownerMapper;
 
     @Override
-    public List<Owner> getAllOwners() {        
-        return ownerRepository.findAll();
+    public List<OwnerResponseDTO> getAllOwners() {        
+        return ownerRepository.findAll().stream()
+                .map(owner -> ownerMapper.map(owner, OwnerResponseDTO.class))
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override
